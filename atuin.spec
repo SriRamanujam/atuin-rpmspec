@@ -1,3 +1,5 @@
+%global debug_package %{nil}
+
 Name: atuin
 Version: 17.1.0
 Release: %autorelease
