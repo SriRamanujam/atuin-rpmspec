@@ -20,8 +20,8 @@ Atuin replaces your existing shell history with a SQLite database, and records a
 %build
 cargo build --release
 
-for shell in "bash" "fish" "zsh"; do
-    target/release/atuin gen-completions --shell $SHELL -o .
+for completion in "bash" "fish" "zsh"; do
+    target/release/atuin gen-completions --shell $completion -o .
 done
 
 %install
