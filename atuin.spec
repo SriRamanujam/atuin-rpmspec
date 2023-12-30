@@ -17,9 +17,19 @@ Atuin replaces your existing shell history with a SQLite database, and records a
 %prep
 %autosetup -p1
 
+%build
+cargo build --release
+
+for shell in "bash" "fish" "zsh"; do
+    target/release/atuin gen-completions --shell $SHELL -o .
+done
 
 %install
-cargo install --root=%{buildroot}%{_prefix} --path=.
+install -Dpm 755 target/release/atuin %{buildroot}%{_bindir}/atuin
+
+install -Dpm 644 atuin.bash %{buildroot}%{_datadir}/bash-completion/completions/atuin
+install -Dpm 644 atuin.bash %{buildroot}%{_datadir}/fish/completions/atuin
+install -Dpm 644 atuin.bash %{buildroot}%{_datadir}/zsh/site-functions/atuin
 
 rm -f %{buildroot}%{_prefix}/.crates.toml \
     %{buildroot}%{_prefix}/.crates2.json
@@ -32,7 +42,9 @@ strip --strip-all %{buildroot}%{_bindir}/*
 %doc README.md
 %doc docs/docs
 %{_bindir}/atuin
-
+%{_datadir}/bash-completion/completions/atuin
+%{_datadir}/fish/completions/atuin
+%{_datadir}/zsh/site-functions/atuin
 
 %changelog
 %autochangelog
