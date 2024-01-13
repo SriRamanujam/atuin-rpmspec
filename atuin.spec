@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name: atuin
-Version: 17.1.0
+Version: 17.2.1
 Release: %autorelease
 Summary: Magical shell history
 
