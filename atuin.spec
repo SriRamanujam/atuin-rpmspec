@@ -9,9 +9,7 @@ License:       MIT
 URL:           https://atuin.sh/
 Source:        https://github.com/atuinsh/atuin/archive/refs/tags/v%{version}.tar.gz
 
-BuildRequires: cargo
-BuildRequires: rust
-BuildRequires: gcc
+BuildRequires: cargo-rpm-macros
 
 %description
 Atuin replaces your existing shell history with a SQLite database, and records
@@ -22,10 +20,15 @@ server.
 
 %prep
 %autosetup -p1
+%cargo_prep
+
+
+%generate_buildrequires
+%cargo_generate_buildrequires
 
 
 %build
-cargo build --release
+%cargo_build
 
 for completion in "bash" "fish" "zsh"; do
     target/release/atuin gen-completions --shell $completion -o .
