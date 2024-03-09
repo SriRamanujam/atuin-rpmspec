@@ -16,6 +16,7 @@ packages:
 jobs:
   - job: copr_build
     trigger: commit
+    update_release: false
     owner: sramanujam
     project: atuin
     targets:
