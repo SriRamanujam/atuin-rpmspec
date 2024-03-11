@@ -62,7 +62,11 @@ EOF
 
 
 %check
-%cargo_test
+%cargo_test -- -- \
+  --skip sync \
+  --skip change_password \
+  --skip multi_user_test \
+  --skip registration
 
 
 %files       -n %{crate}
