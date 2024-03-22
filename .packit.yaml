@@ -1,17 +1,21 @@
 packages:
   atuin:
-    specfile_path: atuin.spec
+    specfile_path: rust-atuin.spec
     files_to_sync:
-      - atuin.spec
+      - rust-atuin.spec
       - .packit.yaml
     upstream_package_name: atuin
-    downstream_package_name: atuin
+    downstream_package_name: rust-atuin
     actions:
       create-archive:
-        - spectool -g -s0 atuin.spec
-        - sh -c 'echo v${PACKIT_PROJECT_VERSION}.tar.gz'
+        - spectool -g -s0 rust-atuin.spec
+        - sh -c 'rust2rpm --vendor --stdout atuin > /dev/null'
+        - sh -c 'echo atuin-${PACKIT_PROJECT_VERSION}.crate'
       get-current-version:
-        - rpmspec -q --qf "%{Version}" --srpm atuin.spec
+        - rpmspec -q --qf "%{Version}" --srpm rust-atuin.spec
+
+srpm_build_deps:
+  - rust2rpm
 
 jobs:
   - job: copr_build
@@ -22,10 +26,8 @@ jobs:
     targets:
       - fedora-all
       - epel-9
-    enable_net: true
   - job: copr_build
     trigger: pull_request
     targets:
       - fedora-all
       - epel-9
-    enable_net: true
