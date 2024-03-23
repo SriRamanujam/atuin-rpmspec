@@ -6,6 +6,10 @@ extra-files = [
     "%config %{_sysconfdir}/profile.d/atuin.sh"
 ]
 
+summary = "magical shell history"
+
+description = "Atuin replaces your existing shell history with a SQLite database, and records additional context for your commands. Additionally, it provides optional and fully encrypted synchronisation of your history between machines, via an Atuin server."
+
 [tests]
 skip = [
     "sync",
@@ -14,8 +18,7 @@ skip = [
     "registration"
 ]
 comments = [
-    "These tests are skipped because they required a Postgres database to be running",
-    "which is not possible in the build environment."
+    "These tests are skipped because they required a Postgres database to be running, which is not possible in the build environment."
 ]
 
 

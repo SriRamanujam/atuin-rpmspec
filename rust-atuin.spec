@@ -7,19 +7,19 @@
 %global crate atuin
 
 Name:           rust-atuin
-Version:        18.1.0
+Version:        18.0.2
 Release:        %autorelease
-Summary:        - magical shell history
+Summary:        magical shell history
 
 License:        MIT
 URL:            https://crates.io/crates/atuin
 Source:         %{crates_source}
-Source:         atuin-18.1.0-vendor.tar.xz
+Source:         atuin-18.0.2-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 
 %global _description %{expand:
-Atuin - magical shell history.}
+Atuin replaces your existing shell history with a SQLite database, and records additional context for your commands. Additionally, it provides optional and fully encrypted synchronisation of your history between machines, via an Atuin server.}
 
 %description %{_description}
 
@@ -70,8 +70,7 @@ EOF
 %if %{with check}
 %check
 # * These tests are skipped because they required a Postgres database to be
-#   running
-# * which is not possible in the build environment.
+#   running, which is not possible in the build environment.
 %cargo_test -- -- --skip sync --skip change_password --skip multi_user_test --skip registration
 %endif
 
