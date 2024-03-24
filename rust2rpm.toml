@@ -1,0 +1,40 @@
+[package]
+extra-files = [
+    "%{_datadir}/bash-completion/completions/atuin",
+    "%{_datadir}/fish/completions/atuin",
+    "%{_datadir}/zsh/site-functions/atuin",
+    "%config %{_sysconfdir}/profile.d/atuin.sh"
+]
+
+summary = "magical shell history"
+
+description = "Atuin replaces your existing shell history with a SQLite database, and records additional context for your commands. Additionally, it provides optional and fully encrypted synchronisation of your history between machines, via an Atuin server."
+
+[tests]
+skip = [
+    "sync",
+    "change_password",
+    "multi_user_test",
+    "registration"
+]
+comments = [
+    "These tests are skipped because they required a Postgres database to be running, which is not possible in the build environment."
+]
+
+
+[scripts.install]
+post = [
+    "# Generate all of the shell-completions",
+    "for completion in bash fish zsh; do",
+    "  %{buildroot}%{_bindir}/atuin gen-completions --shell $completion -o .",
+    "done",
+    "install -Dpm 644 atuin.bash %{buildroot}%{_datadir}/bash-completion/completions/atuin",
+    "install -Dpm 644 atuin.fish %{buildroot}%{_datadir}/fish/completions/atuin",
+    "install -Dpm 644 _atuin %{buildroot}%{_datadir}/zsh/site-functions/atuin",
+    "",
+    "# Add atuin to default profile",
+    "mkdir -p %{buildroot}%{_sysconfdir}/profile.d",
+    "cat > %{buildroot}%{_sysconfdir}/profile.d/atuin.sh <<EOF",
+    "$(%{buildroot}%{_bindir}/atuin init bash)",
+    "EOF"
+]

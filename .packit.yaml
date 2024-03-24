@@ -9,7 +9,7 @@ packages:
     actions:
       create-archive:
         - spectool -g -s0 rust-atuin.spec
-        - sh -c 'rust2rpm --vendor --stdout atuin > /dev/null'
+        - sh -c 'rust2rpm --vendor atuin ${PACKIT_PROJECT_VERSION}'
         - sh -c 'echo atuin-${PACKIT_PROJECT_VERSION}.crate'
       get-current-version:
         - rpmspec -q --qf "%{Version}" --srpm rust-atuin.spec
@@ -25,9 +25,7 @@ jobs:
     project: atuin
     targets:
       - fedora-all
-      - epel-9
   - job: copr_build
     trigger: pull_request
     targets:
       - fedora-all
-      - epel-9
