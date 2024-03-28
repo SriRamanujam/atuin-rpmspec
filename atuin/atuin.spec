@@ -38,6 +38,7 @@ BuildRequires:  protobuf-devel
 %if %{with check}
 BuildRequires:  postgresql-test-rpm-macros
 %endif
+Requires:       bash-preexec
 
 %global _description %{expand:
 Atuin replaces your existing shell history with a SQLite database, and records

@@ -9,7 +9,6 @@ extra-files = [
 ]
 
 summary = "magical shell history"
-cargo-install-lib = true
 
 description = """
 Atuin replaces your existing shell history with a SQLite database, and records
@@ -20,6 +19,9 @@ encrypted synchronisation of your history between machines, via an Atuin server.
 [requires]
 build = [
     "protobuf-devel",
+]
+bin = [
+    "bash-preexec",
 ]
 test = [
     "postgresql-test-rpm-macros",
