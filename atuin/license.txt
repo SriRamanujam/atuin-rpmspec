@@ -1,21 +1,21 @@
 %global _license %{shrink:
 ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND
+((MIT OR Apache-2.0) AND Unicode-DFS-2016) AND
 (0BSD OR MIT OR Apache-2.0) AND
 (Apache-2.0) AND
+(Apache-2.0 AND MIT) AND
 (Apache-2.0 OR BSL-1.0) AND
 (Apache-2.0 OR BSL-1.0 OR MIT) AND
 (Apache-2.0 OR ISC OR MIT) AND
 (Apache-2.0 OR MIT) AND
+(Apache-2.0 OR MIT OR Zlib) AND
 (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND
 (BSD-2-Clause OR Apache-2.0 OR MIT) AND
 (BSD-3-Clause) AND
-(BSL-1.0) AND
+(BSD-3-Clause AND MIT) AND
 (ISC) AND
+(ISC AND MIT AND OpenSSL) AND
 (MIT) AND
-(MIT AND BSD-3-Clause) AND
-(MIT OR Apache-2.0) AND
-(MIT OR Apache-2.0 OR BSD-1-Clause) AND
-(MIT OR Apache-2.0 OR Zlib) AND
 (MPL-2.0) AND
 (Unlicense OR MIT)
 }
