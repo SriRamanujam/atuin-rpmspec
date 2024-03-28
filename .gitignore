@@ -3,3 +3,5 @@ atuin/atuin-*/
 *.tar.gz
 *.tar.xz
 rust-*/*.crate
+rust-*/*-fix-metadata-auto.diff
+bash-preexec/*.patch

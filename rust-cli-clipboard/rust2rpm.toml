@@ -1,0 +1,18 @@
+[package]
+summary = "System Clipboard interfacing library in Rust"
+
+[tests]
+run = [
+    "none",
+]
+comments = [
+    "Upstream tests are failing completely",
+    "https://github.com/allie-wake-up/cli-clipboard/pull/21",
+]
+
+[[package.extra-patches]]
+comments = [
+    "Bump dependencies",
+]
+file = "rust-cli-clipboard-0.4.0-Bump_dependencies.diff"
+number = 10
