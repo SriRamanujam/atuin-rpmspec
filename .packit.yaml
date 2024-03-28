@@ -1,23 +1,26 @@
 packages:
   atuin:
+    paths: [ atuin ]
     specfile_path: atuin.spec
-    upstream_package_name: atuin
     downstream_package_name: atuin
-    actions:
+    upstream_package_name: atuin
+    actions: &Actions-Package-rust2rpm-workspace
+      # Note: in upstream, the License has to be fixed manually after rust2rpm is run
+      # Copy from %cargo_license_summary in the build.log
       fix-spec-file:
         - sh -c 'tar -xf ${PACKIT_PROJECT_ARCHIVE}'
-        - sh -c 'rust2rpm --vendor ./atuin-${PACKIT_PROJECT_VERSION}'
+        - sh -c 'rust2rpm ./${PACKIT_UPSTREAM_PACKAGE_NAME}-${PACKIT_PROJECT_VERSION}'
         # Note: These should not be automated because workspace packages vary case-by-case and rust2rpm does not support
         #       such automation. Adding simple sed expansion to make it more easily reproduced
         # Patch the license file
         - sh -c 'sed -i "/SourceLicense/{N;N;N;s/.*/cat license.txt/e}" ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
         # Change the default %cargo_install
-        - sh -c 'sed -i "s|%cargo_install|install -Dpm0755 target/rpm/atuin -t %{buildroot}%{_bindir}/|" ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
+        - sh -c 'sed -i "s|%cargo_install|install -Dpm 0755 target/rpm/atuin -t %{buildroot}%{_bindir}/|" ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
       create-archive:
-        - spectool -g -s0 atuin.spec
+        - sh -c 'spectool -g -s0 ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
         - sh -c 'echo v${PACKIT_PROJECT_VERSION}.tar.gz'
       get-current-version:
-        - rpmspec -q --qf "%{Version}" --srpm atuin.spec
+        - sh -c 'rpmspec -q --qf "%{Version}" --srpm ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
 
 srpm_build_deps:
   - rust2rpm

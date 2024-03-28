@@ -1,4 +1,5 @@
 *.src.rpm
-atuin-*/
+atuin/atuin-*/
 *.tar.gz
 *.tar.xz
+rust-*/*.crate

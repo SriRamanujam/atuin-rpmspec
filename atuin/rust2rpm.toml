@@ -9,7 +9,6 @@ extra-files = [
 ]
 
 summary = "magical shell history"
-cargo-install-lib = true
 
 description = """
 Atuin replaces your existing shell history with a SQLite database, and records
