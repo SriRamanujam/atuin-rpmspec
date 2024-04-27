@@ -7,14 +7,14 @@
 %global crate atuin
 
 Name:           rust-atuin
-Version:        18.1.0
+Version:        18.2.0
 Release:        %autorelease
 Summary:        magical shell history
 
 License:        MIT
 URL:            https://crates.io/crates/atuin
 Source:         %{crates_source}
-Source:         atuin-18.1.0-vendor.tar.xz
+Source:         atuin-18.2.0-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 
