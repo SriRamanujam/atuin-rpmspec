@@ -32,6 +32,13 @@ License:       %_license
 
 URL:            https://atuin.sh
 Source:         https://github.com/atuinsh/atuin/archive/refs/tags/v%{version}.tar.gz
+# * Fix dependencies
+# * - Switch cli-clipboard for arboard
+# *   https://github.com/atuinsh/atuin/pull/2067
+# * - Bump metrics dependencies
+# *   https://github.com/atuinsh/atuin/pull/2062
+# * Cherry-picked in: https://github.com/LecrisUT/atuin/tree/fedora-18.3.0-patch
+Patch10:       atuin-18.3.0-Fix_dependencies.patch
 
 BuildRequires:  cargo-rpm-macros >= 24
 BuildRequires:  protobuf-devel

@@ -16,6 +16,18 @@ additional context for your commands. Additionally, it provides optional and ful
 encrypted synchronisation of your history between machines, via an Atuin server.
 """
 
+[[package.extra-patches]]
+comments = [
+    "Fix dependencies",
+    "- Switch cli-clipboard for arboard",
+    "  https://github.com/atuinsh/atuin/pull/2067",
+    "- Bump metrics dependencies",
+    "  https://github.com/atuinsh/atuin/pull/2062",
+    "Cherry-picked in: https://github.com/LecrisUT/atuin/tree/fedora-18.3.0-patch",
+]
+file = "atuin-18.3.0-Fix_dependencies.patch"
+number = 10
+
 [requires]
 build = [
     "protobuf-devel",
