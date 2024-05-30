@@ -26,14 +26,19 @@ srpm_build_deps:
   - rust2rpm
 
 jobs:
-  - job: copr_build
+  - &copr_build
+    job: copr_build
+    trigger: pull_request
+    targets:
+      - fedora-rawhide
+    additional_repos:
+      - copr://packit/LecrisUT-rust-metris-rpmspec-main
+      - copr://packit/LecrisUT-sqlx-rpmspec-main
+      - copr://packit/LecrisUT-tonic-rpmspec-main
+  - <<: *copr_build
     trigger: commit
     update_release: false
     owner: sramanujam
     project: atuin
     targets:
       - fedora-all
-  - job: copr_build
-    trigger: pull_request
-    targets:
-      - fedora-rawhide
