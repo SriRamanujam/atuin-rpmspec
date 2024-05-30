@@ -36,13 +36,6 @@ packages:
       create-archive: &Create-archive-crate
         - sh -c 'spectool -g -s0 ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
         - sh -c 'echo ${PACKIT_UPSTREAM_PACKAGE_NAME}-${PACKIT_PROJECT_VERSION}.crate'
-  rust-cli-clipboard:
-    # https://github.com/actuallyallie/cli-clipboard
-    paths: [ rust-cli-clipboard ]
-    specfile_path: rust-cli-clipboard.spec
-    upstream_package_name: cli-clipboard
-    downstream_package_name: rust-cli-clipboard
-    actions: *Actions-Package-rust2rpm
   rust-interim:
     # https://github.com/conradludgate/interim
     paths: [ rust-interim ]
