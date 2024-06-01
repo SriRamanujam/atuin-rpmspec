@@ -1,0 +1,4 @@
+*.src.rpm
+atuin-*/
+*.tar.gz
+*.tar.xz
