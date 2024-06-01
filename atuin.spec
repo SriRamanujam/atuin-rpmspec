@@ -6,10 +6,29 @@ Version:        18.2.0
 Release:        %autorelease
 Summary:        magical shell history
 
-SourceLicense:  MIT
-# FIXME: paste output of %%cargo_license_summary here
-License:        # FIXME
-# LICENSE.dependencies contains a full license breakdown
+%global _license %{shrink:
+((Apache-2.0 OR MIT) AND BSD-3-Clause) AND
+(0BSD OR MIT OR Apache-2.0) AND
+(Apache-2.0) AND
+(Apache-2.0 OR BSL-1.0) AND
+(Apache-2.0 OR BSL-1.0 OR MIT) AND
+(Apache-2.0 OR ISC OR MIT) AND
+(Apache-2.0 OR MIT) AND
+(Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND
+(BSD-2-Clause OR Apache-2.0 OR MIT) AND
+(BSD-3-Clause) AND
+(BSL-1.0) AND
+(ISC) AND
+(MIT) AND
+(MIT AND BSD-3-Clause) AND
+(MIT OR Apache-2.0) AND
+(MIT OR Apache-2.0 OR BSD-1-Clause) AND
+(MIT OR Apache-2.0 OR Zlib) AND
+(MPL-2.0) AND
+(Unlicense OR MIT)
+}
+
+License:       %_license
 
 URL:            https://atuin.sh
 Source:         https://github.com/atuinsh/atuin/archive/refs/tags/v%{version}.tar.gz
@@ -39,7 +58,7 @@ encrypted synchronisation of your history between machines, via an Atuin server.
 %{cargo_vendor_manifest}
 
 %install
-%cargo_install
+install -Dpm0755 target/rpm/atuin -t %{buildroot}%{_bindir}/
 # Generate all of the shell-completions
 for completion in bash fish zsh; do
   %{buildroot}%{_bindir}/atuin gen-completions --shell $completion -o .
