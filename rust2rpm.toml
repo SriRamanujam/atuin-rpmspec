@@ -1,4 +1,6 @@
 [package]
+url = "https://atuin.sh"
+source-url = "https://github.com/atuinsh/atuin/archive/refs/tags/v%{version}.tar.gz"
 extra-files = [
     "%{_datadir}/bash-completion/completions/atuin",
     "%{_datadir}/fish/completions/atuin",
@@ -7,18 +9,27 @@ extra-files = [
 ]
 
 summary = "magical shell history"
+cargo-install-lib = true
 
-description = "Atuin replaces your existing shell history with a SQLite database, and records additional context for your commands. Additionally, it provides optional and fully encrypted synchronisation of your history between machines, via an Atuin server."
+description = """
+Atuin replaces your existing shell history with a SQLite database, and records
+additional context for your commands. Additionally, it provides optional and fully
+encrypted synchronisation of your history between machines, via an Atuin server.
+"""
 
-[tests]
-skip = [
-    "sync",
-    "change_password",
-    "multi_user_test",
-    "registration"
+[requires]
+test = [
+    "postgresql-test-rpm-macros",
 ]
-comments = [
-    "These tests are skipped because they required a Postgres database to be running, which is not possible in the build environment."
+
+[scripts.check]
+pre = [
+    "# start a postgres instance for the tests to use",
+    "export PGTESTS_LOCALE=\"C.UTF-8\"",
+    "export PGTESTS_USERS=\"atuin:pass\"",
+    "export PGTESTS_DATABASES=\"atuin:atuin\"",
+    "export PGTESTS_PORT=5432",
+    "%postgresql_tests_run",
 ]
 
 
