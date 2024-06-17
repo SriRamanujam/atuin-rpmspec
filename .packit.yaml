@@ -1,12 +1,15 @@
 packages:
   atuin:
+    paths: [ atuin ]
     specfile_path: atuin.spec
-    upstream_package_name: atuin
     downstream_package_name: atuin
-    actions:
+    upstream_package_name: atuin
+    actions: &Actions-Package-rust2rpm-workspace
+      # Note: in upstream, the License has to be fixed manually after rust2rpm is run
+      # Copy from %cargo_license_summary in the build.log
       fix-spec-file:
         - sh -c 'tar -xf ${PACKIT_PROJECT_ARCHIVE}'
-        - sh -c 'rust2rpm --vendor ./atuin-${PACKIT_PROJECT_VERSION}'
+        - sh -c 'rust2rpm ./${PACKIT_UPSTREAM_PACKAGE_NAME}-${PACKIT_PROJECT_VERSION}'
         # Note: These should not be automated because workspace packages vary case-by-case and rust2rpm does not support
         #       such automation. Adding simple sed expansion to make it more easily reproduced
         # Patch the license file
@@ -14,23 +17,114 @@ packages:
         # Change the default %cargo_install
         - sh -c 'sed -i "s|%cargo_install|install -Dpm0755 target/rpm/atuin -t %{buildroot}%{_bindir}/|" ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
       create-archive:
-        - spectool -g -s0 atuin.spec
+        - sh -c 'spectool -g -s0 ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
         - sh -c 'echo v${PACKIT_PROJECT_VERSION}.tar.gz'
       get-current-version:
-        - rpmspec -q --qf "%{Version}" --srpm atuin.spec
+        - sh -c 'rpmspec -q --qf "%{Version}" --srpm ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
+
+  # Other dependencies to package:
+  rust-axum-server:
+    # https://github.com/programatik29/axum-server
+    paths: [ rust-axum-server ]
+    specfile_path: rust-axum-server.spec
+    upstream_package_name: axum-server
+    downstream_package_name: rust-axum-server
+    actions: &Actions-Package-rust2rpm
+      <<: *Actions-Package-rust2rpm-workspace
+      fix-spec-file:
+        - sh -c 'rust2rpm ${PACKIT_UPSTREAM_PACKAGE_NAME}'
+      create-archive: &Create-archive-crate
+        - sh -c 'spectool -g -s0 ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
+        - sh -c 'echo ${PACKIT_UPSTREAM_PACKAGE_NAME}-${PACKIT_PROJECT_VERSION}.crate'
+  rust-interim:
+    # https://github.com/conradludgate/interim
+    paths: [ rust-interim ]
+    specfile_path: rust-interim.spec
+    upstream_package_name: interim
+    downstream_package_name: rust-interim
+    actions: *Actions-Package-rust2rpm
+  rust-minspan:
+    # https://github.com/mwotton/minspan
+    paths: [ rust-minspan ]
+    specfile_path: rust-minspan.spec
+    upstream_package_name: minspan
+    downstream_package_name: rust-minspan
+    actions:
+      <<: *Actions-Package-rust2rpm
+      # TODO: Fix missing license
+      # https://github.com/mwotton/minspan/pull/1
+      fix-spec-file:
+        - sh -c 'rust2rpm --ignore-missing-license-files ${PACKIT_UPSTREAM_PACKAGE_NAME}'
+  rust-parse_duration:
+    # https://github.com/zeta12ti/parse_duration/
+    paths: [ rust-parse_duration ]
+    specfile_path: rust-parse_duration.spec
+    upstream_package_name: parse_duration
+    downstream_package_name: rust-parse_duration
+    actions: *Actions-Package-rust2rpm
+  rust-sql-builder:
+    # https://github.com/perdumonocle/sql-builder.git
+    paths: [ rust-sql-builder ]
+    specfile_path: rust-sql-builder.spec
+    upstream_package_name: sql-builder
+    downstream_package_name: rust-sql-builder
+    actions: *Actions-Package-rust2rpm
+  rust-tiny-bip39:
+    # https://github.com/maciejhirsz/tiny-bip39/
+    paths: [ rust-tiny-bip39 ]
+    specfile_path: rust-tiny-bip39.spec
+    upstream_package_name: tiny-bip39
+    downstream_package_name: rust-tiny-bip39
+    actions: *Actions-Package-rust2rpm
+  rust-runtime-format:
+    # https://github.com/conradludgate/strfmt
+    paths: [ rust-runtime-format ]
+    specfile_path: rust-runtime-format.spec
+    upstream_package_name: runtime-format
+    downstream_package_name: rust-runtime-format
+    actions: *Actions-Package-rust2rpm
+  bash-preexec:
+    # https://github.com/rcaloras/bash-preexec
+    paths: [ bash-preexec ]
+    specfile_path: bash-preexec.spec
+    upstream_package_name: bash-preexec
+    downstream_package_name: bash-preexec
+    actions:
+      create-archive:
+        - sh -c 'spectool -g -s0 ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
+        - sh -c 'echo ${PACKIT_PROJECT_VERSION}.tar.gz'
+      get-current-version:
+        - sh -c 'rpmspec -q --qf "%{Version}" --srpm ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
+
+  # Upstream is working on it:
+  rust-crypto_secretbox:
+    # https://bugzilla.redhat.com/show_bug.cgi?id=2259330
+    paths: [ rust-crypto_secretbox ]
+    specfile_path: rust-crypto_secretbox.spec
+    upstream_package_name: crypto_secretbox
+    downstream_package_name: rust-crypto_secretbox
+    actions: &Actions-Package-no-rust2rpm
+      <<: *Actions-Package-rust2rpm
+      fix-spec-file: []
 
 srpm_build_deps:
   - rust2rpm
 
 jobs:
-  - job: copr_build
+  - &copr_build
+    job: copr_build
+    trigger: pull_request
+    targets:
+      - fedora-rawhide
+    additional_repos:
+      - copr://packit/LecrisUT-rusty_parserk-paseto-rpmspec-main
+      - copr://packit/LecrisUT-rust-metris-rpmspec-main
+      - copr://lecris/temp-sqlx
+      - copr://packit/LecrisUT-tonic-rpmspec-main
+  - <<: *copr_build
     trigger: commit
     update_release: false
     owner: sramanujam
     project: atuin
-    targets:
-      - fedora-all
-  - job: copr_build
-    trigger: pull_request
     targets:
       - fedora-all
