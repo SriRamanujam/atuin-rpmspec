@@ -18,6 +18,9 @@ encrypted synchronisation of your history between machines, via an Atuin server.
 """
 
 [requires]
+build = [
+    "protobuf-devel",
+]
 test = [
     "postgresql-test-rpm-macros",
 ]
