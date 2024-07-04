@@ -2,7 +2,7 @@
 %bcond_without check
 
 Name:           atuin
-Version:        18.2.0
+Version:        18.3.0
 Release:        %autorelease
 Summary:        magical shell history
 
@@ -32,9 +32,10 @@ License:       %_license
 
 URL:            https://atuin.sh
 Source:         https://github.com/atuinsh/atuin/archive/refs/tags/v%{version}.tar.gz
-Source:         atuin-18.2.0-vendor.tar.xz
+Source:         atuin-18.3.0-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
+BuildRequires:  protobuf-devel
 %if %{with check}
 BuildRequires:  postgresql-test-rpm-macros
 %endif
@@ -86,7 +87,7 @@ export PGTESTS_PORT=5432
 
 %files
 %license LICENSE
-%license atuin/LICENSE
+%license crates/atuin/LICENSE
 %license LICENSE.dependencies
 %license cargo-vendor.txt
 %doc CHANGELOG.md
