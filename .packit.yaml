@@ -15,7 +15,7 @@ packages:
         # Patch the license file
         - sh -c 'sed -i "/SourceLicense/{N;N;N;s/.*/cat license.txt/e}" ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
         # Change the default %cargo_install
-        - sh -c 'sed -i "s|%cargo_install|install -Dpm 0755 target/rpm/atuin -t %{buildroot}%{_bindir}/|" ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
+        - sh -c 'sed -i "s|%cargo_install.*|install -Dpm 0755 target/rpm/atuin -t %{buildroot}%{_bindir}/|" ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
       create-archive:
         - sh -c 'spectool -g -s0 ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
         - sh -c 'echo v${PACKIT_PROJECT_VERSION}.tar.gz'

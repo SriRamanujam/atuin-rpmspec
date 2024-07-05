@@ -60,12 +60,12 @@ encrypted synchronisation of your history between machines, via an Atuin server.
 %cargo_prep
 
 %generate_buildrequires
-%cargo_generate_buildrequires
+%cargo_generate_buildrequires -a
 
 %build
-%cargo_build
-%{cargo_license_summary}
-%{cargo_license} > LICENSE.dependencies
+%cargo_build -a
+%{cargo_license_summary -a}
+%{cargo_license -a} > LICENSE.dependencies
 
 %install
 install -Dpm 0755 target/rpm/atuin -t %{buildroot}%{_bindir}/
@@ -91,7 +91,7 @@ export PGTESTS_USERS="atuin:pass"
 export PGTESTS_DATABASES="atuin:atuin"
 export PGTESTS_PORT=5432
 %postgresql_tests_run
-%cargo_test
+%cargo_test -a
 %endif
 
 %files

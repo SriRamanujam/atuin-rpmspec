@@ -1,3 +1,6 @@
+[features]
+enable-all = true
+
 [package]
 url = "https://atuin.sh"
 source-url = "https://github.com/atuinsh/atuin/archive/refs/tags/v%{version}.tar.gz"
