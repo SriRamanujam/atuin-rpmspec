@@ -85,9 +85,9 @@ packages:
     upstream_package_name: bash-preexec
     downstream_package_name: bash-preexec
     actions:
+      fix-spec-file: []
       create-archive:
-        - sh -c 'spectool -g -s0 ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
-        - sh -c 'echo ${PACKIT_PROJECT_VERSION}.tar.gz'
+        - sh -c 'echo ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
       get-current-version:
         - sh -c 'rpmspec -q --qf "%{Version}" --srpm ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
 
