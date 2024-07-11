@@ -12,8 +12,9 @@ Summary:        Parses simple English dates, inspired by Linux date command
 License:        MIT
 URL:            https://crates.io/crates/interim
 Source:         %{crates_source}
-# * Bump dependencies
-Patch10:       rust-interim-0.1.2-Relax_dependency.diff
+# Manually created patch for downstream crate metadata changes
+# * - Relax logos dependency
+Patch:          interim-fix-metadata.diff
 
 BuildRequires:  cargo-rpm-macros >= 24
 

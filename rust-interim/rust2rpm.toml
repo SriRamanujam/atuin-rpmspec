@@ -1,12 +1,8 @@
 [package]
 summary = "Parses simple English dates, inspired by Linux date command"
+cargo-toml-patch-comments = [
+    "- Relax logos dependency"
+]
 
 [features]
 enable-all = true
-
-[[package.extra-patches]]
-comments = [
-    "Bump dependencies",
-]
-file = "rust-interim-0.1.2-Relax_dependency.diff"
-number = 10

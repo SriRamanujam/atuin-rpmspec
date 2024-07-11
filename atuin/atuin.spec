@@ -37,6 +37,10 @@ Source:         https://github.com/atuinsh/atuin/archive/refs/tags/v%{version}.t
 # *   https://github.com/atuinsh/atuin/pull/2067
 # * - Bump metrics dependencies
 # *   https://github.com/atuinsh/atuin/pull/2062
+# * - Update tonic and prost dependencies
+# *   https://github.com/atuinsh/atuin/pull/2250
+# *   https://github.com/atuinsh/atuin/pull/2251
+# * - Lower serde_with dependency
 # * Cherry-picked in: https://github.com/LecrisUT/atuin/tree/fedora-18.3.0-patch
 Patch10:       atuin-18.3.0-Fix_dependencies.patch
 

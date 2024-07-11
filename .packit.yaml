@@ -42,7 +42,9 @@ packages:
     specfile_path: rust-interim.spec
     upstream_package_name: interim
     downstream_package_name: rust-interim
-    actions: *Actions-Package-rust2rpm
+    actions: &Actions-Package-no-rust2rpm
+      <<: *Actions-Package-rust2rpm
+      fix-spec-file: []
   rust-minspan:
     # https://github.com/mwotton/minspan
     paths: [ rust-minspan ]
@@ -55,13 +57,6 @@ packages:
       # https://github.com/mwotton/minspan/pull/1
       fix-spec-file:
         - sh -c 'rust2rpm --ignore-missing-license-files ${PACKIT_UPSTREAM_PACKAGE_NAME}'
-  rust-parse_duration:
-    # https://github.com/zeta12ti/parse_duration/
-    paths: [ rust-parse_duration ]
-    specfile_path: rust-parse_duration.spec
-    upstream_package_name: parse_duration
-    downstream_package_name: rust-parse_duration
-    actions: *Actions-Package-rust2rpm
   rust-sql-builder:
     # https://github.com/perdumonocle/sql-builder.git
     paths: [ rust-sql-builder ]
@@ -103,9 +98,7 @@ packages:
     specfile_path: rust-crypto_secretbox.spec
     upstream_package_name: crypto_secretbox
     downstream_package_name: rust-crypto_secretbox
-    actions: &Actions-Package-no-rust2rpm
-      <<: *Actions-Package-rust2rpm
-      fix-spec-file: []
+    actions: *Actions-Package-no-rust2rpm
 
 srpm_build_deps:
   - rust2rpm
