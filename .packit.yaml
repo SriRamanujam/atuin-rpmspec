@@ -23,12 +23,12 @@ packages:
         - sh -c 'rpmspec -q --qf "%{Version}" --srpm ${PACKIT_DOWNSTREAM_PACKAGE_NAME}.spec'
 
   # Other dependencies to package:
-  rust-axum-server:
-    # https://github.com/programatik29/axum-server
-    paths: [ rust-axum-server ]
-    specfile_path: rust-axum-server.spec
-    upstream_package_name: axum-server
-    downstream_package_name: rust-axum-server
+  rust-tiny-bip39:
+    # https://github.com/maciejhirsz/tiny-bip39/
+    paths: [ rust-tiny-bip39 ]
+    specfile_path: rust-tiny-bip39.spec
+    upstream_package_name: tiny-bip39
+    downstream_package_name: rust-tiny-bip39
     actions: &Actions-Package-rust2rpm
       <<: *Actions-Package-rust2rpm-workspace
       fix-spec-file:
@@ -57,27 +57,6 @@ packages:
       # https://github.com/mwotton/minspan/pull/1
       fix-spec-file:
         - sh -c 'rust2rpm --ignore-missing-license-files ${PACKIT_UPSTREAM_PACKAGE_NAME}'
-  rust-sql-builder:
-    # https://github.com/perdumonocle/sql-builder.git
-    paths: [ rust-sql-builder ]
-    specfile_path: rust-sql-builder.spec
-    upstream_package_name: sql-builder
-    downstream_package_name: rust-sql-builder
-    actions: *Actions-Package-rust2rpm
-  rust-tiny-bip39:
-    # https://github.com/maciejhirsz/tiny-bip39/
-    paths: [ rust-tiny-bip39 ]
-    specfile_path: rust-tiny-bip39.spec
-    upstream_package_name: tiny-bip39
-    downstream_package_name: rust-tiny-bip39
-    actions: *Actions-Package-rust2rpm
-  rust-runtime-format:
-    # https://github.com/conradludgate/strfmt
-    paths: [ rust-runtime-format ]
-    specfile_path: rust-runtime-format.spec
-    upstream_package_name: runtime-format
-    downstream_package_name: rust-runtime-format
-    actions: *Actions-Package-rust2rpm
   bash-preexec:
     # https://github.com/rcaloras/bash-preexec
     paths: [ bash-preexec ]
