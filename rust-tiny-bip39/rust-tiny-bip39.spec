@@ -7,7 +7,7 @@
 Name:           rust-tiny-bip39
 Version:        1.0.0
 Release:        %autorelease
-Summary:        Fork of the bip39 crate with fixes to v0.6
+Summary:        Rust implementation of BIP-0039
 
 License:        MIT OR Apache-2.0
 URL:            https://crates.io/crates/tiny-bip39
@@ -18,8 +18,15 @@ Patch:          tiny-bip39-fix-metadata-auto.diff
 BuildRequires:  cargo-rpm-macros >= 24
 
 %global _description %{expand:
-A fork of the bip39 crate with fixes to v0.6. Rust implementation of
-BIP-0039.}
+A fork of the bip39 crate with fixes to v0.6. Rust implementation of BIP-0039.
+
+This BIP describes the implementation of a mnemonic code or mnemonic sentence
+-- a group of easy to remember words -- for the generation of deterministic
+wallets.
+
+It consists of two parts: generating the mnenomic, and converting it into a
+binary seed.
+}
 
 %description %{_description}
 
