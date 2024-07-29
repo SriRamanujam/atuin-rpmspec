@@ -5,7 +5,7 @@
 %global crate minspan
 
 Name:           rust-minspan
-Version:        0.1.1
+Version:        0.1.2
 Release:        %autorelease
 Summary:        Package for determining the minimum span of one vector within another
 
@@ -30,7 +30,7 @@ This package contains library source intended for building other packages which
 use the "%{crate}" crate.
 
 %files          devel
-# FIXME: no license files detected
+%license %{crate_instdir}/LICENSE
 %doc %{crate_instdir}/README.md
 %{crate_instdir}/
 
