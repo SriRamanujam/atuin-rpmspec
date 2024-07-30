@@ -1,11 +1,11 @@
 --- interim-0.1.2/Cargo.toml	1970-01-01T00:00:01+00:00
-+++ interim-0.1.2/Cargo.toml	2024-07-11T11:53:17.355598+00:00
++++ interim-0.1.2/Cargo.toml	2024-07-30T09:38:17.990361+00:00
 @@ -33,7 +33,7 @@
  default-features = false
  
  [dependencies.logos]
 -version = "0.14.0"
-+version = ">=0.13.0"
++version = ">=0.13.0,<0.15"
  
  [dependencies.time]
  version = "0.3.9"
