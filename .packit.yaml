@@ -82,12 +82,14 @@ jobs:
   - &copr_build
     job: copr_build
     trigger: pull_request
+    owner: lecris
+    project: atuin
     targets:
       - fedora-rawhide
     additional_repos:
-      - copr://packit/LecrisUT-rust-metris-rpmspec-main
-      - copr://packit/LecrisUT-sqlx-rpmspec-main
-      - copr://packit/LecrisUT-tonic-rpmspec-main
+      - copr://lecris/rust-metrics
+      - copr://lecris/rust-sqlx
+      - copr://lecris/rust-tonic
   - <<: *copr_build
     trigger: commit
     update_release: false
