@@ -1,0 +1,8 @@
+[package]
+summary = "Parses simple English dates, inspired by Linux date command"
+cargo-toml-patch-comments = [
+    "- Relax logos dependency"
+]
+
+[features]
+enable-all = true

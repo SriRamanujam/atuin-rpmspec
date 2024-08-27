@@ -8,22 +8,22 @@ Summary:        magical shell history
 
 %global _license %{shrink:
 ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND
+((MIT OR Apache-2.0) AND Unicode-DFS-2016) AND
 (0BSD OR MIT OR Apache-2.0) AND
 (Apache-2.0) AND
+(Apache-2.0 AND MIT) AND
 (Apache-2.0 OR BSL-1.0) AND
 (Apache-2.0 OR BSL-1.0 OR MIT) AND
 (Apache-2.0 OR ISC OR MIT) AND
 (Apache-2.0 OR MIT) AND
+(Apache-2.0 OR MIT OR Zlib) AND
 (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND
 (BSD-2-Clause OR Apache-2.0 OR MIT) AND
 (BSD-3-Clause) AND
-(BSL-1.0) AND
+(BSD-3-Clause AND MIT) AND
 (ISC) AND
+(ISC AND MIT AND OpenSSL) AND
 (MIT) AND
-(MIT AND BSD-3-Clause) AND
-(MIT OR Apache-2.0) AND
-(MIT OR Apache-2.0 OR BSD-1-Clause) AND
-(MIT OR Apache-2.0 OR Zlib) AND
 (MPL-2.0) AND
 (Unlicense OR MIT)
 }
@@ -32,13 +32,24 @@ License:       %_license
 
 URL:            https://atuin.sh
 Source:         https://github.com/atuinsh/atuin/archive/refs/tags/v%{version}.tar.gz
-Source:         atuin-18.3.0-vendor.tar.xz
+# * Fix dependencies
+# * - Switch cli-clipboard for arboard
+# *   https://github.com/atuinsh/atuin/pull/2067
+# * - Bump metrics dependencies
+# *   https://github.com/atuinsh/atuin/pull/2062
+# * - Update tonic and prost dependencies
+# *   https://github.com/atuinsh/atuin/pull/2250
+# *   https://github.com/atuinsh/atuin/pull/2251
+# * - Lower serde_with dependency
+# * Cherry-picked in: https://github.com/LecrisUT/atuin/tree/fedora-18.3.0-patch
+Patch10:       atuin-18.3.0-Fix_dependencies.patch
 
-BuildRequires:  cargo-rpm-macros >= 25
+BuildRequires:  cargo-rpm-macros >= 24
 BuildRequires:  protobuf-devel
 %if %{with check}
 BuildRequires:  postgresql-test-rpm-macros
 %endif
+Requires:       bash-preexec
 
 %global _description %{expand:
 Atuin replaces your existing shell history with a SQLite database, and records
@@ -49,17 +60,19 @@ encrypted synchronisation of your history between machines, via an Atuin server.
 %description %{_description}
 
 %prep
-%autosetup -n atuin-%{version} -p1 -a1
-%cargo_prep -v vendor
+%autosetup -n atuin-%{version} -p1
+%cargo_prep
+
+%generate_buildrequires
+%cargo_generate_buildrequires -a
 
 %build
-%cargo_build
-%{cargo_license_summary}
-%{cargo_license} > LICENSE.dependencies
-%{cargo_vendor_manifest}
+%cargo_build -a
+%{cargo_license_summary -a}
+%{cargo_license -a} > LICENSE.dependencies
 
 %install
-install -Dpm0755 target/rpm/atuin -t %{buildroot}%{_bindir}/
+install -Dpm 0755 target/rpm/atuin -t %{buildroot}%{_bindir}/
 # Generate all of the shell-completions
 for completion in bash fish zsh; do
   %{buildroot}%{_bindir}/atuin gen-completions --shell $completion -o .
@@ -82,14 +95,13 @@ export PGTESTS_USERS="atuin:pass"
 export PGTESTS_DATABASES="atuin:atuin"
 export PGTESTS_PORT=5432
 %postgresql_tests_run
-%cargo_test
+%cargo_test -a
 %endif
 
 %files
 %license LICENSE
 %license crates/atuin/LICENSE
 %license LICENSE.dependencies
-%license cargo-vendor.txt
 %doc CHANGELOG.md
 %doc CODE_OF_CONDUCT.md
 %doc CONTRIBUTING.md

@@ -1,0 +1,393 @@
+Subject: [PATCH] chore(deps): update to sqlx 0.8 (#2343)
+chore(deps): update to tonic 0.12, prost 0.13 (#2250)
+Replace cli-clipboard with arboard
+fix(metrics): update macros after update
+Bump metrics dependencies
+Fix dependencies for Fedora
+---
+Index: crates/atuin-client/Cargo.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-client/Cargo.toml b/crates/atuin-client/Cargo.toml
+--- a/crates/atuin-client/Cargo.toml	(revision 9be49e434e549d6b13928b530139b66fef6171f1)
++++ b/crates/atuin-client/Cargo.toml	(revision 235ecda192354d0ea62bd6db9081cc1ac3fd0388)
+@@ -53,7 +53,7 @@
+ futures = "0.3"
+ crypto_secretbox = "0.1.1"
+ generic-array = { version = "0.14", features = ["serde"] }
+-serde_with = "3.8.1"
++serde_with = "3.6.1"
+ 
+ # encryption
+ rusty_paseto = { version = "0.7.0", default-features = false }
+Index: crates/atuin-server/Cargo.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-server/Cargo.toml b/crates/atuin-server/Cargo.toml
+--- a/crates/atuin-server/Cargo.toml	(revision 235ecda192354d0ea62bd6db9081cc1ac3fd0388)
++++ b/crates/atuin-server/Cargo.toml	(revision 51e5f82197fbcac579e114a36596ace08f8b5f22)
+@@ -35,5 +35,5 @@
+ rustls-pemfile = "2.1"
+ argon2 = "0.5"
+ semver = { workspace = true }
+-metrics-exporter-prometheus = "0.12.1"
+-metrics = "0.21.1"
++metrics-exporter-prometheus = "0.15.0"
++metrics = "0.23.0"
+Index: crates/atuin-server/src/handlers/history.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-server/src/handlers/history.rs b/crates/atuin-server/src/handlers/history.rs
+--- a/crates/atuin-server/src/handlers/history.rs	(revision 51e5f82197fbcac579e114a36596ace08f8b5f22)
++++ b/crates/atuin-server/src/handlers/history.rs	(revision 5749f29f234b1bba106b749417233d0593cbfbf9)
+@@ -65,7 +65,8 @@
+ 
+     if req.sync_ts.unix_timestamp_nanos() < 0 || req.history_ts.unix_timestamp_nanos() < 0 {
+         error!("client asked for history from < epoch 0");
+-        counter!("atuin_history_epoch_before_zero", 1);
++        let counter_atuin_history_epoch_before_zero = counter!("atuin_history_epoch_before_zero");
++        counter_atuin_history_epoch_before_zero.increment(1);
+ 
+         return Err(
+             ErrorResponse::reply("asked for history from before epoch 0")
+@@ -95,7 +96,8 @@
+         user.id
+     );
+ 
+-    counter!("atuin_history_returned", history.len() as u64);
++    let counter_atuin_history_returned = counter!("atuin_history_returned");
++    counter_atuin_history_returned.increment(history.len() as u64);
+ 
+     Ok(Json(SyncHistoryResponse { history }))
+ }
+@@ -131,7 +133,8 @@
+     let State(AppState { database, settings }) = state;
+ 
+     debug!("request to add {} history items", req.len());
+-    counter!("atuin_history_uploaded", req.len() as u64);
++    let counter_atuin_history_uploaded = counter!("atuin_history_uploaded");
++    counter_atuin_history_uploaded.increment(req.len() as u64);
+ 
+     let mut history: Vec<NewHistory> = req
+         .into_iter()
+@@ -151,7 +154,8 @@
+         // Don't return an error here. We want to insert as much of the
+         // history list as we can, so log the error and continue going.
+         if !keep {
+-            counter!("atuin_history_too_long", 1);
++            let counter_atuin_history_too_long = counter!("atuin_history_too_long");
++            counter_atuin_history_too_long.increment(1);
+ 
+             tracing::warn!(
+                 "history too long, got length {}, max {}",
+Index: crates/atuin-server/src/handlers/user.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-server/src/handlers/user.rs b/crates/atuin-server/src/handlers/user.rs
+--- a/crates/atuin-server/src/handlers/user.rs	(revision 51e5f82197fbcac579e114a36596ace08f8b5f22)
++++ b/crates/atuin-server/src/handlers/user.rs	(revision 5749f29f234b1bba106b749417233d0593cbfbf9)
+@@ -143,7 +143,8 @@
+         .await;
+     }
+ 
+-    counter!("atuin_users_registered", 1);
++    let counter_atuin_users_registered = counter!("atuin_users_registered");
++    counter_atuin_users_registered.increment(1);
+ 
+     match db.add_session(&new_session).await {
+         Ok(_) => Ok(Json(RegisterResponse { session: token })),
+@@ -170,7 +171,8 @@
+             .with_status(StatusCode::INTERNAL_SERVER_ERROR));
+     };
+ 
+-    counter!("atuin_users_deleted", 1);
++    let counter_atuin_users_deleted = counter!("atuin_users_deleted");
++    counter_atuin_users_deleted.increment(1);
+ 
+     Ok(Json(DeleteUserResponse {}))
+ }
+Index: crates/atuin-server/src/handlers/v0/record.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-server/src/handlers/v0/record.rs b/crates/atuin-server/src/handlers/v0/record.rs
+--- a/crates/atuin-server/src/handlers/v0/record.rs	(revision 51e5f82197fbcac579e114a36596ace08f8b5f22)
++++ b/crates/atuin-server/src/handlers/v0/record.rs	(revision 5749f29f234b1bba106b749417233d0593cbfbf9)
+@@ -25,14 +25,16 @@
+         "request to add records"
+     );
+ 
+-    counter!("atuin_record_uploaded", records.len() as u64);
++    let counter_atuin_record_uploaded = counter!("atuin_record_uploaded");
++    counter_atuin_record_uploaded.increment(records.len() as u64);
+ 
+     let keep = records
+         .iter()
+         .all(|r| r.data.data.len() <= settings.max_record_size || settings.max_record_size == 0);
+ 
+     if !keep {
+-        counter!("atuin_record_too_large", 1);
++        let counter_atuin_record_too_large = counter!("atuin_record_too_large");
++        counter_atuin_record_too_large.increment(1);
+ 
+         return Err(
+             ErrorResponse::reply("could not add records; record too large")
+@@ -108,7 +110,8 @@
+         }
+     };
+ 
+-    counter!("atuin_record_downloaded", records.len() as u64);
++    let counter_atuin_record_downloaded = counter!("atuin_record_downloaded");
++    counter_atuin_record_downloaded.increment(records.len() as u64);
+ 
+     Ok(Json(records))
+ }
+Index: crates/atuin-server/src/handlers/v0/store.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-server/src/handlers/v0/store.rs b/crates/atuin-server/src/handlers/v0/store.rs
+--- a/crates/atuin-server/src/handlers/v0/store.rs	(revision 51e5f82197fbcac579e114a36596ace08f8b5f22)
++++ b/crates/atuin-server/src/handlers/v0/store.rs	(revision 5749f29f234b1bba106b749417233d0593cbfbf9)
+@@ -24,14 +24,16 @@
+     }) = state;
+ 
+     if let Err(e) = database.delete_store(&user).await {
+-        counter!("atuin_store_delete_failed", 1);
++        let counter_atuin_store_delete_failed = counter!("atuin_store_delete_failed");
++        counter_atuin_store_delete_failed.increment(1);
+         error!("failed to delete store {e:?}");
+ 
+         return Err(ErrorResponse::reply("failed to delete store")
+             .with_status(StatusCode::INTERNAL_SERVER_ERROR));
+     }
+ 
+-    counter!("atuin_store_deleted", 1);
++    let counter_atuin_store_deleted = counter!("atuin_store_deleted");
++    counter_atuin_store_deleted.increment(1);
+ 
+     Ok(())
+ }
+Index: crates/atuin-server/src/metrics.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-server/src/metrics.rs b/crates/atuin-server/src/metrics.rs
+--- a/crates/atuin-server/src/metrics.rs	(revision 51e5f82197fbcac579e114a36596ace08f8b5f22)
++++ b/crates/atuin-server/src/metrics.rs	(revision 5749f29f234b1bba106b749417233d0593cbfbf9)
+@@ -49,8 +49,11 @@
+         ("status", status),
+     ];
+ 
+-    metrics::increment_counter!("http_requests_total", &labels);
+-    metrics::histogram!("http_requests_duration_seconds", latency, &labels);
++    let counter_http_requests_total = metrics::counter!("http_requests_total", &labels);
++    counter_http_requests_total.increment(1);
++    let histogram_http_requests_duration_seconds =
++        metrics::histogram!("http_requests_duration_seconds", &labels);
++    histogram_http_requests_duration_seconds.record(latency);
+ 
+     response
+ }
+Index: crates/atuin/Cargo.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin/Cargo.toml b/crates/atuin/Cargo.toml
+--- a/crates/atuin/Cargo.toml	(revision 5749f29f234b1bba106b749417233d0593cbfbf9)
++++ b/crates/atuin/Cargo.toml	(revision fc99262d9a81c2b65dd590d9fab6148499fd84d6)
+@@ -38,7 +38,7 @@
+ sync = ["atuin-client/sync"]
+ daemon = ["atuin-client/daemon"]
+ server = ["atuin-server", "atuin-server-postgres"]
+-clipboard = ["cli-clipboard"]
++clipboard = ["arboard"]
+ check-update = ["atuin-client/check-update"]
+ 
+ [dependencies]
+@@ -86,8 +86,11 @@
+ sysinfo = "0.30.7"
+ regex="1.10.4"
+ 
+-[target.'cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))'.dependencies]
+-cli-clipboard = { version = "0.4.0", optional = true }
++[target.'cfg(any(target_os = "windows", target_os = "macos"))'.dependencies]
++arboard = { version = "3.3", optional = true }
++
++[target.'cfg(target_os = "linux")'.dependencies]
++arboard = { version = "3.3", optional = true, features = ["wayland-data-control"] }
+ 
+ [dev-dependencies]
+ tracing-tree = "0.3"
+Index: crates/atuin/src/command/client/search/interactive.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin/src/command/client/search/interactive.rs b/crates/atuin/src/command/client/search/interactive.rs
+--- a/crates/atuin/src/command/client/search/interactive.rs	(revision 5749f29f234b1bba106b749417233d0593cbfbf9)
++++ b/crates/atuin/src/command/client/search/interactive.rs	(revision fc99262d9a81c2b65dd590d9fab6148499fd84d6)
+@@ -1174,7 +1174,10 @@
+     any(target_os = "windows", target_os = "macos", target_os = "linux")
+ ))]
+ fn set_clipboard(s: String) {
+-    cli_clipboard::set_contents(s).unwrap();
++    let mut ctx = arboard::Clipboard::new().unwrap();
++    ctx.set_text(s).unwrap();
++    // Use the clipboard context to make sure it is saved
++    ctx.get_text().unwrap();
+ }
+ 
+ #[cfg(not(all(
+Index: crates/atuin-daemon/Cargo.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-daemon/Cargo.toml b/crates/atuin-daemon/Cargo.toml
+--- a/crates/atuin-daemon/Cargo.toml	(revision fc99262d9a81c2b65dd590d9fab6148499fd84d6)
++++ b/crates/atuin-daemon/Cargo.toml	(revision 547ba483dda1fd84f7939125b5c2800dd073250c)
+@@ -25,15 +25,17 @@
+ tracing-subscriber = { workspace = true }
+ 
+ dashmap = "5.5.3"
+-tonic-types = "0.11.0"
+-tonic = "0.11"
+-prost = "0.12"
+-prost-types = "0.12"
++tonic-types = "0.12.0"
++tonic = "0.12"
++prost = "0.13"
++prost-types = "0.13"
+ tokio-stream = {version="0.1.14", features=["net"]}
++hyper-util = "0.1"
++
+ rand.workspace = true
+ 
+ [target.'cfg(target_os = "linux")'.dependencies]
+ listenfd = "1.0.1"
+ 
+ [build-dependencies]
+-tonic-build = "0.11"
++tonic-build = "0.12"
+Index: crates/atuin-daemon/src/client.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-daemon/src/client.rs b/crates/atuin-daemon/src/client.rs
+--- a/crates/atuin-daemon/src/client.rs	(revision fc99262d9a81c2b65dd590d9fab6148499fd84d6)
++++ b/crates/atuin-daemon/src/client.rs	(revision 547ba483dda1fd84f7939125b5c2800dd073250c)
+@@ -4,6 +4,8 @@
+ use tonic::transport::{Channel, Endpoint, Uri};
+ use tower::service_fn;
+ 
++use hyper_util::rt::TokioIo;
++
+ #[cfg(unix)]
+ use tokio::net::UnixStream;
+ 
+@@ -23,9 +25,11 @@
+     pub async fn new(path: String) -> Result<Self> {
+         let channel = Endpoint::try_from("http://atuin_local_daemon:0")?
+             .connect_with_connector(service_fn(move |_: Uri| {
+-                let path = path.to_string();
++                let path = path.clone();
+ 
+-                UnixStream::connect(path)
++                async move {
++                    Ok::<_, std::io::Error>(TokioIo::new(UnixStream::connect(path.clone()).await?))
++                }
+             }))
+             .await
+             .map_err(|_| eyre!("failed to connect to local atuin daemon. Is it running?"))?;
+@@ -40,6 +44,7 @@
+         let channel = Endpoint::try_from("http://atuin_local_daemon:0")?
+             .connect_with_connector(service_fn(move |_: Uri| {
+                 let url = format!("127.0.0.1:{}", port);
++
+                 TcpStream::connect(url)
+             }))
+             .await
+Index: crates/atuin-daemon/src/server.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-daemon/src/server.rs b/crates/atuin-daemon/src/server.rs
+--- a/crates/atuin-daemon/src/server.rs	(revision fc99262d9a81c2b65dd590d9fab6148499fd84d6)
++++ b/crates/atuin-daemon/src/server.rs	(revision 547ba483dda1fd84f7939125b5c2800dd073250c)
+@@ -207,6 +207,7 @@
+     };
+ 
+     let uds_stream = UnixListenerStream::new(uds);
++
+     Server::builder()
+         .add_service(HistoryServer::new(history))
+         .serve_with_incoming_shutdown(
+@@ -214,6 +215,7 @@
+             shutdown_signal(cleanup.then_some(socket_path.into())),
+         )
+         .await?;
++
+     Ok(())
+ }
+ 
+Index: Cargo.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Cargo.toml b/Cargo.toml
+--- a/Cargo.toml	(revision 547ba483dda1fd84f7939125b5c2800dd073250c)
++++ b/Cargo.toml	(revision 1c2f3b2a19b3c2f3819ac30914c8156245d09b83)
+@@ -53,7 +53,7 @@
+ default-features = false
+ 
+ [workspace.dependencies.sqlx]
+-version = "0.7"
++version = "0.8"
+ features = ["runtime-tokio-rustls", "time", "postgres", "uuid"]
+ 
+ # Config for 'cargo dist'
+Index: crates/atuin-common/src/lib.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-common/src/lib.rs b/crates/atuin-common/src/lib.rs
+--- a/crates/atuin-common/src/lib.rs	(revision 547ba483dda1fd84f7939125b5c2800dd073250c)
++++ b/crates/atuin-common/src/lib.rs	(revision 1c2f3b2a19b3c2f3819ac30914c8156245d09b83)
+@@ -32,7 +32,7 @@
+             Uuid: sqlx::Decode<'r, DB>,
+         {
+             fn decode(
+-                value: <DB as sqlx::database::HasValueRef<'r>>::ValueRef,
++                value: DB::ValueRef<'r>,
+             ) -> std::result::Result<Self, sqlx::error::BoxDynError> {
+                 Uuid::decode(value).map(Self)
+             }
+@@ -44,8 +44,9 @@
+         {
+             fn encode_by_ref(
+                 &self,
+-                buf: &mut <DB as sqlx::database::HasArguments<'q>>::ArgumentBuffer,
+-            ) -> sqlx::encode::IsNull {
++                buf: &mut DB::ArgumentBuffer<'q>,
++            ) -> Result<sqlx::encode::IsNull, Box<(dyn std::error::Error + Send + Sync + 'static)>>
++            {
+                 self.0.encode_by_ref(buf)
+             }
+         }

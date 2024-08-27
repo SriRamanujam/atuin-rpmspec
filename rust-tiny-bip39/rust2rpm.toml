@@ -1,0 +1,12 @@
+[package]
+summary = "Rust implementation of BIP-0039"
+description = """
+A fork of the bip39 crate with fixes to v0.6. Rust implementation of BIP-0039.
+
+This BIP describes the implementation of a mnemonic code or mnemonic sentence
+-- a group of easy to remember words -- for the generation of deterministic
+wallets.
+
+It consists of two parts: generating the mnenomic, and converting it into a
+binary seed.
+"""
