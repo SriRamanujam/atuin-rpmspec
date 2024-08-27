@@ -68,11 +68,12 @@ packages:
   # Upstream is working on it:
   rust-crypto_secretbox:
     # https://bugzilla.redhat.com/show_bug.cgi?id=2259330
+    # Will probably need to takeover
     paths: [ rust-crypto_secretbox ]
     specfile_path: rust-crypto_secretbox.spec
     upstream_package_name: crypto_secretbox
     downstream_package_name: rust-crypto_secretbox
-    actions: *Actions-Package-no-rust2rpm
+    actions: *Actions-Package-rust2rpm
 
 srpm_build_deps:
   - rust2rpm
