@@ -1,4 +1,5 @@
-Subject: [PATCH] chore(deps): update to tonic 0.12, prost 0.13 (#2250)
+Subject: [PATCH] chore(deps): update to sqlx 0.8 (#2343)
+chore(deps): update to tonic 0.12, prost 0.13 (#2250)
 Replace cli-clipboard with arboard
 fix(metrics): update macros after update
 Bump metrics dependencies
@@ -344,3 +345,49 @@ diff --git a/crates/atuin-daemon/src/server.rs b/crates/atuin-daemon/src/server.
      Ok(())
  }
  
+Index: Cargo.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Cargo.toml b/Cargo.toml
+--- a/Cargo.toml	(revision 547ba483dda1fd84f7939125b5c2800dd073250c)
++++ b/Cargo.toml	(revision 1c2f3b2a19b3c2f3819ac30914c8156245d09b83)
+@@ -53,7 +53,7 @@
+ default-features = false
+ 
+ [workspace.dependencies.sqlx]
+-version = "0.7"
++version = "0.8"
+ features = ["runtime-tokio-rustls", "time", "postgres", "uuid"]
+ 
+ # Config for 'cargo dist'
+Index: crates/atuin-common/src/lib.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crates/atuin-common/src/lib.rs b/crates/atuin-common/src/lib.rs
+--- a/crates/atuin-common/src/lib.rs	(revision 547ba483dda1fd84f7939125b5c2800dd073250c)
++++ b/crates/atuin-common/src/lib.rs	(revision 1c2f3b2a19b3c2f3819ac30914c8156245d09b83)
+@@ -32,7 +32,7 @@
+             Uuid: sqlx::Decode<'r, DB>,
+         {
+             fn decode(
+-                value: <DB as sqlx::database::HasValueRef<'r>>::ValueRef,
++                value: DB::ValueRef<'r>,
+             ) -> std::result::Result<Self, sqlx::error::BoxDynError> {
+                 Uuid::decode(value).map(Self)
+             }
+@@ -44,8 +44,9 @@
+         {
+             fn encode_by_ref(
+                 &self,
+-                buf: &mut <DB as sqlx::database::HasArguments<'q>>::ArgumentBuffer,
+-            ) -> sqlx::encode::IsNull {
++                buf: &mut DB::ArgumentBuffer<'q>,
++            ) -> Result<sqlx::encode::IsNull, Box<(dyn std::error::Error + Send + Sync + 'static)>>
++            {
+                 self.0.encode_by_ref(buf)
+             }
+         }
