@@ -32,9 +32,8 @@ pre = [
     "export PGTESTS_USERS=\"atuin:pass\"",
     "export PGTESTS_DATABASES=\"atuin:atuin\"",
     "export PGTESTS_PORT=5432",
-    "%postgresql_tests_run",
+    "%postgresql_tests_run"
 ]
-
 
 [scripts.install]
 post = [
@@ -46,9 +45,36 @@ post = [
     "install -Dpm 644 atuin.fish %{buildroot}%{_datadir}/fish/completions/atuin",
     "install -Dpm 644 _atuin %{buildroot}%{_datadir}/zsh/site-functions/atuin",
     "",
+
     "# Add atuin to default profile",
     "mkdir -p %{buildroot}%{_sysconfdir}/profile.d",
+
     "cat > %{buildroot}%{_sysconfdir}/profile.d/atuin.sh <<EOF",
+    "if [[ \"\\$SHELL\" == \"/bin/bash\" ]]; then",
+    "EOF",
+
+    "cat >> %{buildroot}%{_sysconfdir}/profile.d/atuin.sh <<EOF",
     "$(%{buildroot}%{_bindir}/atuin init bash)",
+    "EOF",
+
+    "cat >> %{buildroot}%{_sysconfdir}/profile.d/atuin.sh <<EOF",
+    "elif [[ \"\\$SHELL\" == \"/bin/zsh\" || \"\\$SHELL\" == \"/usr/bin/zsh\" ]]; then",
+    "# The /etc/zprofile calls 'emulate -L ksh', to make zsh happier",
+    "# when sourcing files in /etc/profile.d. However, atuin needs",
+    "# some zsh-specific functions (i.e. compinit), so we emulate",
+    "# for the duration of this if block. Then, 'emulate -L ksh' is",
+    "# called once again at the very end.",
+    "emulate -L zsh",
+    "EOF",
+
+    "cat >> %{buildroot}%{_sysconfdir}/profile.d/atuin.sh <<EOF",
+    "$(%{buildroot}%{_bindir}/atuin init zsh)",
+    "EOF",
+
+    "cat >> %{buildroot}%{_sysconfdir}/profile.d/atuin.sh <<EOF",
+    "# Make sure to go back to emulating ksh after we finish",
+    "# initializing atuin.",
+    "emulate -L ksh",
+    "fi",
     "EOF"
 ]
